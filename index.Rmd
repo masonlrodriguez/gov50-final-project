@@ -11,7 +11,7 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring the relationship between oil and politics. If I can find Mexico specific data, then I would like to focus on different states in Mexico, specifically how the presence of the state owned oil company, PEMEX might effect party voting. If this data does not exist, then I could look more broadly at how oil wealth is related to civil wars or similar conflicts within different countries.
+I am interested in exploring the relationship between oil and politics. If I can find Mexico specific data, then I would like to focus on different states in Mexico, specifically how the presence of the state owned oil company, PEMEX might effect party voting. If this data does not exist, then I could look more broadly at how oil wealth is related to civil wars or similar conflicts within different countries. 
 
 ## Proposal
 
