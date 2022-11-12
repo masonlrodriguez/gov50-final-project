@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["civilwar-codebook.txt","civilwar.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["civilwar-codebook.txt","civilwar.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1521,7 +1521,110 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>I am interested in exploring the relationship between oil and politics. If I can find Mexico specific data, then I would like to focus on different states in Mexico, specifically how the presence of the state owned oil company, PEMEX might effect party voting. If this data does not exist, then I could look more broadly at how oil wealth is related to civil wars or similar conflicts within different countries.</p>
 <h2 id="proposal">Proposal</h2>
 <p>Does the presence of oil wealth increase the chance of civil war in any given country? In this study, I will examine whether or not countries whose oil exports make up a significant portion of GDP are more inclined toward civil war than those with economies less dependent on oil. I hypothesize that oil wealth decreases the incidence of civil war. I expect countries with oil wealth to be more authoritarian and have stronger state capacity. I would expect the governments of these countries to clamp down on dissent before the point of civil war and thus be fairly insulated from it. The basic unit of analysis will be a country and I will be using Civil Wars dataset posted on the GOV50 website. The explanatory variable is whether or not the country has a significant amount of oil, defined in my data as a country with 1/3 of export revenues coming from oil. This is coded as 1 if true and 0 if not. My outcome variable is whether or not there was a civil war in that country, 1 if so and 0 if not. This outcome variable is currently given by year, but I will likely merge years into decades or similar larger unit of measurement. If I observe less incidence of civil war in countries with significant oil then my hypothesis will be proven correct. If I observe more civil wars in countries with oil than those without, or no difference between them, then my hypothesis will be proven incorrect.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span><span class='va'>civilwar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"civilwar.csv"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>civilwar</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 6 × 77
+  ccode country cname cmark  year   war  warl onset    pop  lpop
+  &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1     2 USA     USA       1  1945     0     0     0 140969  11.9
+2     2 USA     USA       0  1946     0     0     0 141936  11.9
+3     2 USA     USA       0  1947     0     0     0 142713  11.9
+4     2 USA     USA       0  1948     0     0     0 145326  11.9
+5     2 USA     USA       0  1949     0     0     0 147987  11.9
+6     2 USA     USA       0  1950     0     0     0 152273  11.9
+# … with 67 more variables: polity2 &lt;dbl&gt;, gdpen &lt;dbl&gt;,
+#   gdptype &lt;dbl&gt;, gdpenl &lt;dbl&gt;, lgdpenl1 &lt;dbl&gt;, lpopl1 &lt;dbl&gt;,
+#   western &lt;dbl&gt;, eeurop &lt;dbl&gt;, lamerica &lt;dbl&gt;, ssafrica &lt;dbl&gt;,
+#   asia &lt;dbl&gt;, nafrme &lt;dbl&gt;, colbrit &lt;dbl&gt;, colfra &lt;dbl&gt;,
+#   mtnest &lt;dbl&gt;, lmtnest &lt;dbl&gt;, elevdiff &lt;dbl&gt;, Oil &lt;dbl&gt;,
+#   ncontig &lt;dbl&gt;, ethfrac &lt;dbl&gt;, ef &lt;dbl&gt;, plural &lt;dbl&gt;,
+#   second &lt;dbl&gt;, numlang &lt;dbl&gt;, relfrac &lt;dbl&gt;, plurrel &lt;dbl&gt;, …</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>war</span> <span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 918 × 77
+   ccode country       cname cmark  year   war  warl onset   pop  lpop
+   &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1    40 CUBA          CUBA      0  1958     1     0     1 6763   8.82
+ 2    40 CUBA          CUBA      0  1959     1     1     0 6901   8.84
+ 3    41 HAITI         HAITI     0  1991     1     0     1 6625   8.80
+ 4    41 HAITI         HAITI     0  1992     1     1     0 6760   8.82
+ 5    41 HAITI         HAITI     0  1993     1     1     0 6861.  8.83
+ 6    41 HAITI         HAITI     0  1994     1     1     0 7009.  8.85
+ 7    41 HAITI         HAITI     0  1995     1     1     0 7168   8.88
+ 8    42 DOMINICAN RE… DOMI…     0  1965     1     0     1 3835   8.25
+ 9    90 GUATEMALA     GUAT…     0  1968     1     0     1 4944   8.51
+10    90 GUATEMALA     GUAT…     0  1969     1     1     0 5093   8.54
+# … with 908 more rows, and 67 more variables: polity2 &lt;dbl&gt;,
+#   gdpen &lt;dbl&gt;, gdptype &lt;dbl&gt;, gdpenl &lt;dbl&gt;, lgdpenl1 &lt;dbl&gt;,
+#   lpopl1 &lt;dbl&gt;, western &lt;dbl&gt;, eeurop &lt;dbl&gt;, lamerica &lt;dbl&gt;,
+#   ssafrica &lt;dbl&gt;, asia &lt;dbl&gt;, nafrme &lt;dbl&gt;, colbrit &lt;dbl&gt;,
+#   colfra &lt;dbl&gt;, mtnest &lt;dbl&gt;, lmtnest &lt;dbl&gt;, elevdiff &lt;dbl&gt;,
+#   Oil &lt;dbl&gt;, ncontig &lt;dbl&gt;, ethfrac &lt;dbl&gt;, ef &lt;dbl&gt;, plural &lt;dbl&gt;,
+#   second &lt;dbl&gt;, numlang &lt;dbl&gt;, relfrac &lt;dbl&gt;, plurrel &lt;dbl&gt;, …</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>civilwar</span> <span class='op'>&lt;-</span> <span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>decade <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
+<span>    <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1949</span> <span class='op'>~</span> <span class='st'>"1940s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1949</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1959</span> <span class='op'>~</span> <span class='st'>"1950s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1959</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1969</span> <span class='op'>~</span> <span class='st'>"1960s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1969</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1979</span> <span class='op'>~</span> <span class='st'>"1970s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1979</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1989</span> <span class='op'>~</span> <span class='st'>"1980s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1989</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1999</span> <span class='op'>~</span> <span class='st'>"1990s"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>civilwar</span> <span class='op'>&lt;-</span> <span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>region <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
+<span>    <span class='va'>western</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Western"</span>,</span>
+<span>    <span class='va'>eeurop</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Eastern Europe"</span>,</span>
+<span>    <span class='va'>lamerica</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Latin America"</span>,</span>
+<span>    <span class='va'>ssafrica</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Sub-Saharan Africa"</span>,</span>
+<span>    <span class='va'>asia</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Asia"</span>,</span>
+<span>    <span class='va'>nafrme</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"North Africa and Middle East"</span></span>
+<span>  <span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>civilwar_counts</span> <span class='op'>&lt;-</span> <span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>country</span>, <span class='va'>year</span>, <span class='va'>war</span>, <span class='va'>Oil</span>, <span class='va'>fuelexp</span>, <span class='va'>decade</span>, <span class='va'>region</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>country</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>years_at_war <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>war</span><span class='op'>)</span>,</span>
+<span>            years_with_oil <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>Oil</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span></span>
+<span><span class='va'>civilwar_counts</span></span></code></pre>
+</div>
+<pre><code># A tibble: 161 × 3
+   country     years_at_war years_with_oil
+   &lt;chr&gt;              &lt;dbl&gt;          &lt;dbl&gt;
+ 1 AFGHANISTAN           22              0
+ 2 ALBANIA                0              0
+ 3 ALGERIA               10             38
+ 4 ANGOLA                25             25
+ 5 ARGENTINA              6              0
+ 6 ARMENIA                0              0
+ 7 AUSTRALIA              0              0
+ 8 AUSTRIA                0              0
+ 9 AZERBAIJAN             3              9
+10 BAHRAIN                0             29
+# … with 151 more rows</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>plot</span> <span class='op'>&lt;-</span> <span class='va'>civilwar_counts</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>years_with_oil</span>, y <span class='op'>=</span> <span class='va'>years_at_war</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Oil and Civil War"</span>, x <span class='op'>=</span> <span class='st'>"Years with Oil (1945-1999)"</span>, y <span class='op'>=</span> <span class='st'>"Years in Civil War (1945-1999)"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>plot</span></span></code></pre>
+</div>
+<img src="index_files/figure-html5/unnamed-chunk-1-1.png" width="624" />
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>#compare number of years with oil to number of years with war, by country</span></span></code></pre>
+</div>
+</div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
