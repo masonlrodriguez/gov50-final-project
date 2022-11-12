@@ -8,7 +8,7 @@ output:
 ---
 
 
-
+  
 ## Project thoughts
 
 I am interested in exploring the relationship between oil and politics. If I can find Mexico specific data, then I would like to focus on different states in Mexico, specifically how the presence of the state owned oil company, PEMEX might effect party voting. If this data does not exist, then I could look more broadly at how oil wealth is related to civil wars or similar conflicts within different countries.
@@ -17,7 +17,7 @@ I am interested in exploring the relationship between oil and politics. If I can
 
 Does the presence of oil wealth increase the chance of civil war in any given country? In this study, I will examine whether or not countries whose oil exports make up a significant portion of GDP are more inclined toward civil war than those with economies less dependent on oil. I hypothesize that oil wealth decreases the incidence of civil war. I expect countries with oil wealth to be more authoritarian and have stronger state capacity. I would expect the governments of these countries to clamp down on dissent before the point of civil war and thus be fairly insulated from it. The basic unit of analysis will be a country and I will be using Civil Wars dataset posted on the GOV50 website. The explanatory variable is whether or not the country has a significant amount of oil, defined in my data as a country with 1/3 of export revenues coming from oil. This is coded as 1 if true and 0 if not. My outcome variable is whether or not there was a civil war in that country, 1 if so and 0 if not. This outcome variable is currently given by year, but I will likely merge years into decades or similar larger unit of measurement. If I observe less incidence of civil war in countries with significant oil then my hypothesis will be proven correct. If I observe more civil wars in countries with oil than those without, or no difference between them, then my hypothesis will be proven incorrect. 
 
-## Visualization 1
+## Visualization 1 
 
 
 ```{r echo = FALSE}
