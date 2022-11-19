@@ -115,7 +115,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["civilwar-codebook.txt","civilwar.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["civilwar-codebook.txt","civilwar.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/Plot-1.png","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/header-attrs-2.16/header-attrs.js","index_files/header-attrs-2.17/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1523,9 +1523,168 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>Does the presence of oil wealth increase the chance of civil war in any given country? In this study, I will examine whether or not countries whose oil exports make up a significant portion of GDP are more inclined toward civil war than those with economies less dependent on oil. I hypothesize that oil wealth decreases the incidence of civil war. I expect countries with oil wealth to be more authoritarian and have stronger state capacity. I would expect the governments of these countries to clamp down on dissent before the point of civil war and thus be fairly insulated from it. The basic unit of analysis will be a country and I will be using Civil Wars dataset posted on the GOV50 website. The explanatory variable is whether or not the country has a significant amount of oil, defined in my data as a country with 1/3 of export revenues coming from oil. This is coded as 1 if true and 0 if not. My outcome variable is whether or not there was a civil war in that country, 1 if so and 0 if not. This outcome variable is currently given by year, but I will likely merge years into decades or similar larger unit of measurement. If I observe less incidence of civil war in countries with significant oil then my hypothesis will be proven correct. If I observe more civil wars in countries with oil than those without, or no difference between them, then my hypothesis will be proven incorrect.</p>
 <h2 id="visualization-1">Visualization 1</h2>
 <div class="layout-chunk" data-layout="l-body">
-<p><img src="index_files/figure-html5/unnamed-chunk-1-1.png" width="624" /></p>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span></span>
+<span><span class='va'>civilwar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"civilwar.csv"</span><span class='op'>)</span></span>
+<span></span>
+<span></span>
+<span><span class='va'>civilwar</span> <span class='op'>&lt;-</span> <span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>decade <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
+<span>    <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1949</span> <span class='op'>~</span> <span class='st'>"1940s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1949</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1959</span> <span class='op'>~</span> <span class='st'>"1950s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1959</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1969</span> <span class='op'>~</span> <span class='st'>"1960s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1969</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1979</span> <span class='op'>~</span> <span class='st'>"1970s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1979</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1989</span> <span class='op'>~</span> <span class='st'>"1980s"</span>,</span>
+<span>    <span class='va'>year</span> <span class='op'>&gt;</span> <span class='fl'>1989</span> <span class='op'>&amp;</span> <span class='va'>year</span> <span class='op'>&lt;=</span> <span class='fl'>1999</span> <span class='op'>~</span> <span class='st'>"1990s"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>civilwar</span> <span class='op'>&lt;-</span> <span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>region <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/case_when.html'>case_when</a></span><span class='op'>(</span></span>
+<span>    <span class='va'>western</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Western"</span>,</span>
+<span>    <span class='va'>eeurop</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Eastern Europe"</span>,</span>
+<span>    <span class='va'>lamerica</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Latin America"</span>,</span>
+<span>    <span class='va'>ssafrica</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Sub-Saharan Africa"</span>,</span>
+<span>    <span class='va'>asia</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"Asia"</span>,</span>
+<span>    <span class='va'>nafrme</span> <span class='op'>==</span> <span class='cn'>TRUE</span> <span class='op'>~</span> <span class='st'>"North Africa and Middle East"</span></span>
+<span>  <span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>civilwar_counts</span> <span class='op'>&lt;-</span> <span class='va'>civilwar</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>country</span>, <span class='va'>year</span>, <span class='va'>war</span>, <span class='va'>Oil</span>, <span class='va'>fuelexp</span>, <span class='va'>decade</span>, <span class='va'>region</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>country</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>years_at_war <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>war</span><span class='op'>)</span>,</span>
+<span>            years_with_oil <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='va'>Oil</span><span class='op'>)</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>civilwar_counts</span></span></code></pre>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<pre><code># A tibble: 161 × 3
+   country     years_at_war years_with_oil
+   &lt;chr&gt;              &lt;dbl&gt;          &lt;dbl&gt;
+ 1 AFGHANISTAN           22              0
+ 2 ALBANIA                0              0
+ 3 ALGERIA               10             38
+ 4 ANGOLA                25             25
+ 5 ARGENTINA              6              0
+ 6 ARMENIA                0              0
+ 7 AUSTRALIA              0              0
+ 8 AUSTRIA                0              0
+ 9 AZERBAIJAN             3              9
+10 BAHRAIN                0             29
+# … with 151 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>#civilwar_counts</span></span>
+<span></span>
+<span><span class='va'>plot</span> <span class='op'>&lt;-</span> <span class='va'>civilwar_counts</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>years_with_oil</span>, y <span class='op'>=</span> <span class='va'>years_at_war</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>.5</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span>  <span class='co'>#geom_smooth(method = lm) + </span></span>
+<span>  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='st'>"Oil and Civil War"</span>, x <span class='op'>=</span> <span class='st'>"Years with Oil (1945-1999)"</span>, y <span class='op'>=</span> <span class='st'>"Years in Civil War (1945-1999)"</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>plot</span></span></code></pre>
+</div>
+<img src="index_files/figure-html5/Plot-1.png" width="624" />
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>#compare number of years with oil to number of years with war, by country</span></span>
+<span></span>
+<span></span>
+<span><span class='co'>##ideas on visualizing the distribution from Sooahn</span></span>
+<span>  <span class='co'>#panelmatch package, time series cross section data, </span></span>
+<span>  <span class='co'>#try to create a hist based on war variable, dist for group where war  = 0 and war = 1</span></span>
+<span>  <span class='co'>#also upload data on repo so Sooahn can take a look</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='co'>#try to create visualizations with PanelMatch package for years with war (and maybe years with oil)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>PanelMatch</span><span class='op'>)</span></span>
+<span></span>
+<span><span class='co'>##DisplayTreatment(unit.id = "war",</span></span>
+<span>                 <span class='co'>#time.id = "year", </span></span>
+<span>                 <span class='co'>#legend.position = "none",</span></span>
+<span>                 <span class='co'>#xlab = "year", </span></span>
+<span>                 <span class='co'>#ylab = "Country",</span></span>
+<span>                 <span class='co'>#treatment = "threat", </span></span>
+<span>                 <span class='co'>#data = civilwar,</span></span>
+<span>                 <span class='co'>#dense.plot = TRUE)</span></span>
+<span></span>
+<span><span class='co'>## tried to get this to go but this section needs more work lol</span></span></code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://broom.tidymodels.org/'>broom</a></span><span class='op'>)</span></span>
+<span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://yihui.org/knitr/'>knitr</a></span><span class='op'>)</span></span>
+<span></span>
+<span><span class='va'>lm1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>years_at_war</span> <span class='op'>~</span> <span class='va'>years_with_oil</span>, data <span class='op'>=</span> <span class='va'>civilwar_counts</span><span class='op'>)</span></span>
+<span></span>
+<span></span>
+<span><span class='va'>lm1</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code># A tibble: 2 × 5
+  term           estimate std.error statistic       p.value
+  &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
+1 (Intercept)     5.67       0.900     6.31   0.00000000270
+2 years_with_oil  0.00505    0.0649    0.0778 0.938        </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='va'>lm1</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://generics.r-lib.org/reference/tidy.html'>tidy</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>|&gt;</span></span>
+<span>  <span class='fu'><a href='https://rdrr.io/pkg/knitr/man/kable.html'>kable</a></span><span class='op'>(</span>caption <span class='op'>=</span> <span class='st'>"Coefficent Estimates for a Model Fitted to Estimate Relationship Between War and Oil Wealth"</span>,</span>
+<span>        col.names <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Predictor"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"Std. Error"</span>, <span class='st'>"Statistic"</span>, <span class='st'>"P-value"</span><span class='op'>)</span>,</span>
+<span>        digits <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>2</span>, <span class='fl'>3</span>, <span class='fl'>2</span>, <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span></span></code></pre>
+</div>
+<table>
+<caption><span id="tab:Regression">Table 1: </span>Coefficent Estimates for a Model Fitted to Estimate Relationship Between War and Oil Wealth</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Predictor</th>
+<th style="text-align: right;">Estimate</th>
+<th style="text-align: right;">Std. Error</th>
+<th style="text-align: right;">Statistic</th>
+<th style="text-align: right;">P-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">5.67</td>
+<td style="text-align: right;">0.900</td>
+<td style="text-align: right;">6.31</td>
+<td style="text-align: right;">0.000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">years_with_oil</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: right;">0.065</td>
+<td style="text-align: right;">0.08</td>
+<td style="text-align: right;">0.938</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>lm1</span><span class='op'>)</span></span></code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = years_at_war ~ years_with_oil, data = civilwar_counts)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-5.953 -5.675 -5.675  3.199 46.325 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    5.674991   0.899828   6.307  2.7e-09 ***
+years_with_oil 0.005054   0.064946   0.078    0.938    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 10.54 on 159 degrees of freedom
+Multiple R-squared:  3.809e-05, Adjusted R-squared:  -0.006251 
+F-statistic: 0.006056 on 1 and 159 DF,  p-value: 0.9381</code></pre>
+</div>
+<p>Here we see that a one unit increase in years with oil results in a roughly .005 increase in years at war for a country. This is hardly significant, but also not quite what I’m trying to prove. The above graph illustrates that countries with oil are less likely to be at war and that those without war are more likely to spend more years at war. Further analysis will need to be employed in order to illustrate this relationship in a more intuitive way.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

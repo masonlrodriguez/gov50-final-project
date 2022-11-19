@@ -20,7 +20,7 @@ Does the presence of oil wealth increase the chance of civil war in any given co
 ## Visualization 1 
 
 
-```{r echo = FALSE}
+```{r echo}
 library(tidyverse)
 civilwar <- read_csv("civilwar.csv")
 
@@ -50,16 +50,66 @@ civilwar_counts <- civilwar |>
   summarize(years_at_war = sum(war),
             years_with_oil = sum(Oil))
 
+civilwar_counts
+```
 
+```{r Plot}
 #civilwar_counts
 
 plot <- civilwar_counts |>
   ggplot(mapping = aes(x = years_with_oil, y = years_at_war)) +
-  geom_point() +
+  geom_point(alpha = .5) +
+  #geom_smooth(method = lm) + 
   labs(title = "Oil and Civil War", x = "Years with Oil (1945-1999)", y = "Years in Civil War (1945-1999)")
 
 plot
 
 #compare number of years with oil to number of years with war, by country
 
+
+##ideas on visualizing the distribution from Sooahn
+  #panelmatch package, time series cross section data, 
+  #try to create a hist based on war variable, dist for group where war  = 0 and war = 1
+  #also upload data on repo so Sooahn can take a look
 ```
+
+```{r plot2}
+#try to create visualizations with PanelMatch package for years with war (and maybe years with oil)
+library(PanelMatch)
+
+##DisplayTreatment(unit.id = "war",
+                 #time.id = "year", 
+                 #legend.position = "none",
+                 #xlab = "year", 
+                 #ylab = "Country",
+                 #treatment = "threat", 
+                 #data = civilwar,
+                 #dense.plot = TRUE)
+
+## tried to get this to go but this section needs more work lol
+```
+
+
+```{r Regression}
+library(broom)
+library(knitr)
+
+lm1 <- lm(years_at_war ~ years_with_oil, data = civilwar_counts)
+
+
+lm1 |>
+  tidy()
+
+lm1 |>
+  tidy() |>
+  kable(caption = "Coefficent Estimates for a Model Fitted to Estimate Relationship Between War and Oil Wealth",
+        col.names = c("Predictor", "Estimate", "Std. Error", "Statistic", "P-value"),
+        digits = c(0, 2, 3, 2, 3))
+
+
+
+summary(lm1)
+```
+Here we see that a one unit increase in years with oil results in a roughly .005 increase in years at war for a country. This is hardly significant, but also not quite what I'm trying to prove. The above graph illustrates that countries with oil are less likely to be at war and that those without war are more likely to spend more years at war. Further analysis will need to be employed in order to illustrate this relationship in a more intuitive way. 
+
+
