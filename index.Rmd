@@ -1,7 +1,7 @@
 ---
 title: "Final Project--Oil and Civil War"
 author: "Mason Rodriguez"
-description: "Oil and Politics"
+description: "How Are Oil and Civil War Related?"
 output:
   distill::distill_article:
     self_contained: false
@@ -9,18 +9,18 @@ output:
 
 
   
-## Project thoughts
 
-I am interested in exploring the relationship between oil and politics. If I can find Mexico specific data, then I would like to focus on different states in Mexico, specifically how the presence of the state owned oil company, PEMEX might effect party voting. If this data does not exist, then I could look more broadly at how oil wealth is related to civil wars or similar conflicts within different countries.
+## Introduction
 
-## Proposal
+Does the presence of oil wealth increase the chance of civil war in any given country? In this study, I will examine whether or not countries whose oil exports make up a significant portion of GDP are more inclined toward civil war than those with economies less dependent on oil. I hypothesize that oil wealth decreases the incidence of civil war. I expect countries with oil wealth to be more authoritarian and have stronger state capacity. I would expect the governments of these countries to clamp down on dissent before the point of civil war and thus be fairly insulated from it.
 
-Does the presence of oil wealth increase the chance of civil war in any given country? In this study, I will examine whether or not countries whose oil exports make up a significant portion of GDP are more inclined toward civil war than those with economies less dependent on oil. I hypothesize that oil wealth decreases the incidence of civil war. I expect countries with oil wealth to be more authoritarian and have stronger state capacity. I would expect the governments of these countries to clamp down on dissent before the point of civil war and thus be fairly insulated from it. The basic unit of analysis will be a country and I will be using Civil Wars dataset posted on the GOV50 website. The explanatory variable is whether or not the country has a significant amount of oil, defined in my data as a country with 1/3 of export revenues coming from oil. This is coded as 1 if true and 0 if not. My outcome variable is whether or not there was a civil war in that country, 1 if so and 0 if not. This outcome variable is currently given by year, but I will likely merge years into decades or similar larger unit of measurement. If I observe less incidence of civil war in countries with significant oil then my hypothesis will be proven correct. If I observe more civil wars in countries with oil than those without, or no difference between them, then my hypothesis will be proven incorrect. 
+## Data
+I will be running a cross-sectional experiment in which the basic unit of analysis will be a country in one regression, and a country-year in another and I will be using the Civil Wars dataset posted on the GOV50 website. The explanatory variable is whether or not the country has a significant amount of oil, defined in my data as a country with 1/3 of export revenues coming from oil. This is coded as 1 if true and 0 if not. My outcome variable is whether or not there was a civil war in that country, 1 if so and 0 if not. If I observe less incidence of civil war in countries with significant oil then my hypothesis will be proven correct. If I observe more civil wars in countries with oil than those without, or no difference between them, then my hypothesis will be proven incorrect. 
 
-## Visualization 1 
+## Visualizations 
 
 
-```{r echo}
+```{r, echo = FALSE}
 library(tidyverse)
 civilwar <- read_csv("civilwar.csv")
 
@@ -50,10 +50,10 @@ civilwar_counts <- civilwar |>
   summarize(years_at_war = sum(war),
             years_with_oil = sum(Oil))
 
-civilwar_counts
+#civilwar_counts
 ```
 
-```{r Plot}
+```{r echo = FALSE}
 #civilwar_counts
 
 plot <- civilwar_counts |>
@@ -73,43 +73,67 @@ plot
   #also upload data on repo so Sooahn can take a look
 ```
 
-```{r plot2}
+```{r echo = FALSE}
 #try to create visualizations with PanelMatch package for years with war (and maybe years with oil)
 library(PanelMatch)
 
-##DisplayTreatment(unit.id = "war",
-                 #time.id = "year", 
-                 #legend.position = "none",
-                 #xlab = "year", 
-                 #ylab = "Country",
-                 #treatment = "threat", 
-                 #data = civilwar,
-                 #dense.plot = TRUE)
+civilwar_it <- civilwar |>
+  select(c(country, year, war, Oil, fuelexp, decade, region, ef, polity2))
 
-## tried to get this to go but this section needs more work lol
+library(panelView)
+panelview(1 ~ Oil, 
+          data = civilwar_it, index = c("country", "year"), 
+          type = "treat", main = "Did 1/3 of export revenues come from oil?",
+          legend.labs = c("No", "Yes", "Missing"), background = "white", 
+          cex.main = 20, cex.axis= 1.5, cex.lab = 12, cex.legend = 8)
+panelview(1 ~ war, 
+          data = civilwar_it, index = c("country", "year"), 
+          type = "treat", main = "Was there civil war?",
+          legend.labs = c("No", "Yes", "Missing"), background = "white", 
+          cex.main = 20, cex.axis= 1.5, cex.lab = 12, cex.legend = 8)
+
 ```
 
 
-```{r Regression}
+```{r echo = FALSE}
 library(broom)
 library(knitr)
 
 lm1 <- lm(years_at_war ~ years_with_oil, data = civilwar_counts)
 
 
-lm1 |>
-  tidy()
+#lm1 |>
+  #tidy()
 
 lm1 |>
   tidy() |>
   kable(caption = "Coefficent Estimates for a Model Fitted to Estimate Relationship Between War and Oil Wealth",
         col.names = c("Predictor", "Estimate", "Std. Error", "Statistic", "P-value"),
-        digits = c(0, 2, 3, 2, 3))
+        digits = c(0, 3, 3, 2, 3))
 
 
 
-summary(lm1)
+#summary(lm1)
+
+
+lm_paneldata2 <- lm(war ~ Oil + polity2, data = civilwar_it)
+
+lm_paneldata2 |>
+  tidy() |>
+  kable(caption = "Coefficent Estimates for a Model Fitted to Estimate Relationship Between War, Oil Wealth, and Polity Scores",
+        col.names = c("Predictor", "Estimate", "Std. Error", "Statistic", "P-value"),
+        digits = c(0, 3, 3, 2, 3))
+
 ```
-Here we see that a one unit increase in years with oil results in a roughly .005 increase in years at war for a country. This is hardly significant, but also not quite what I'm trying to prove. The above graph illustrates that countries with oil are less likely to be at war and that those without war are more likely to spend more years at war. Further analysis will need to be employed in order to illustrate this relationship in a more intuitive way. 
+## Results
 
+Here we see that a one unit increase in years with oil results in a roughly .005 increase in years at war for a country. This regression was done by creating a count of each country's total years at war and total years with more than 1/3 of export revenue coming from oil. The .005 increase is hardly significant, but also not quite what I'm trying to prove. The graph titled "Oil and Civil War" shows that the distribution of points is skewed toward the axes, indicating that  that countries with oil are less likely to be at war and that those without war are more likely to spend more years at war.  
+
+Upon consultation with my TF, it was determined that I should also visualize the data in a panel view. The graphs "Did 1/3 of export revenues come from oil?" and "Was there civil war?" show the presence of oil and war, respectively, in a give year.
+
+Following the panel view visualization, I did a second regression, this time ignoring year/country and treating each row of data as independent observations. The units of this data are country-year, instead of just country as before. I then did a multiple regression, holding ethnic fractionalization (ef) constant. A one point increase in the presence of oil resulted in a .025 decrease in the presence of civil war in a country in a year. Given that the oil variable is binary, a one point increase in oil is the same as going from having less that 1/3 of exports coming from oil to having more than 1/3 of exports coming from oil.
+
+## Conclusion
+
+In sum, while oil wealth was correlated to a decrease in the incidence of war, it was a very small decrease and was not of the scale that I had been anticipating. I do not believe that the coefficient indicates causality. For one, the decrease was very small, and for another, there were many cofounders for which I did not or could not control. GDP per capita, type of government, years sovereign, and many more variables could be affecting the relationship between civil war and oil wealth. Further work on this topic should control for those and other variables while also updating the dataset to include years after 1999. It's possible that events such as the Arab Spring would significantly affect the results, given the large presence of oil in the region and the ongoing civil wars in Libya, Yemen, and Syria. 
 
